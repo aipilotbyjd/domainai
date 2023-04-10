@@ -3,11 +3,13 @@ import { View, StyleSheet } from "react-native";
 import { TextInput, Button, List, Accordion } from "react-native-paper";
 import { Configuration, OpenAIApi } from "openai";
 import axios from "axios";
+import "react-native-url-polyfill/auto";
 
 const BusinessNameGenerator = () => {
   const [keywords, setKeywords] = useState("");
   const [businessNames, setBusinessNames] = useState([]);
   const [domainNames, setDomainNames] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const generateNamebyAI = async () => {
     setLoading(true);
@@ -20,7 +22,7 @@ const BusinessNameGenerator = () => {
 
     const openai = new OpenAIApi(configuration);
 
-    const prompt = `generate 50 startup names using keyword ${inputValue} and separate names by ','`; // Fixed typo 'genrate' to 'generate'
+    const prompt = `generate 50 startup names using keyword ${keywords} and separate names by ','`; // Fixed typo 'genrate' to 'generate'
 
     const response = await openai.createCompletion({
       model: "text-davinci-003",
@@ -48,10 +50,7 @@ const BusinessNameGenerator = () => {
 
   const generateBusinessNames = async () => {
     try {
-      const response = await axios.get(
-        `https://api.businessnamegenerator.com/v1.0/businessnames?query=${keywords}`
-      );
-      setBusinessNames(response.data);
+      generateNamebyAI();
     } catch (error) {
       console.error(error);
     }
